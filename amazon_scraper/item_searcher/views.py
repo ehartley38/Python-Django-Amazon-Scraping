@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from .models import Item
 
 
 details = [
@@ -20,7 +21,7 @@ details = [
 # Create your views here.
 def home(request):
     context = {
-        'details': details
+        'items': Item.objects.all()
     }
     return render(request, 'item_searcher/home.html', context)
 
