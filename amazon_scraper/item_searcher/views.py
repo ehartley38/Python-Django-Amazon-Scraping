@@ -1,27 +1,24 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Item
-
-
-details = [
-    {
-        'username': 'ehart',
-        'email': 'ehartley38@gmail.com',
-        'date_joined': '8/6/2020'
-    },
-    {
-        'username': 'eddy',
-        'email': 'ehartley11@gmail.com',
-        'date_joined': '8/6/2019'
-    }
-]
+from .forms import ItemSearchForm
 
 
 
-# Create your views here.
+
 def home(request):
+    #Home page item search bar
+    if request.method == 'POST':
+        form = ItemSearchForm(request.POST)
+        if form.is_valid():
+            form.save()
+            product = form.cleaned_data.get('name')
+    else:
+        form = ItemSearchForm()
+
     context = {
-        'items': Item.objects.all()
+        'items': Item.objects.all(),
+        'form': form
     }
     return render(request, 'item_searcher/home.html', context)
 
