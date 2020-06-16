@@ -1,8 +1,9 @@
 from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from .models import Item
 from .forms import ItemSearchForm
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView
 
 
 
@@ -31,6 +32,16 @@ class ItemListView(ListView):
 
 class ItemDetailView(DetailView): #View for more detail on item when you click on it
     model = Item
+
+class ItemCreateView(LoginRequiredMixin, CreateView): #View with a form where we create a new post
+    model = Item
+    fields = ['name', 'description', 'price']
+
+    #Override the form_valid method
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
 
 
 def about(request):
