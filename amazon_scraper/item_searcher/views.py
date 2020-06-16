@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Item
 from .forms import ItemSearchForm
+from django.views.generic import ListView, DetailView
 
 
 
@@ -21,6 +22,16 @@ def home(request):
         'form': form
     }
     return render(request, 'item_searcher/home.html', context)
+
+class ItemListView(ListView):
+    model = Item
+    template_name = 'item_searcher/home.html' #<app>/<model>_<viewtype>.html
+    context_object_name = 'items'
+    ordering = ['price'] #Orders items by price
+
+class ItemDetailView(DetailView): #View for more detail on item when you click on it
+    model = Item
+
 
 def about(request):
     return render(request, 'item_searcher/about.html', {'title': 'About'})

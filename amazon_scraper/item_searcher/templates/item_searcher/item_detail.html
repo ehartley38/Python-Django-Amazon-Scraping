@@ -1,0 +1,14 @@
+{% extends 'item_searcher/base.html' %}
+{% block content %}
+    <article class="media content-section">
+        <img class="rounded-circle article-img" src="{{ object.user.profile.image.url }}">
+        <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2" href="#">{{ object.user }}</a>
+                <small class="text-muted">{{ object.description }}</small>
+            </div>
+            <h2 class="article-title">{{ object.name }}</h2>
+            <p>{{ object.price }}</p>
+        </div>
+    </article>
+{% endblock content %}
