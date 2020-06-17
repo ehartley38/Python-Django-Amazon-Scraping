@@ -1,9 +1,9 @@
 from django.shortcuts import render
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponse
 from .models import Item
 from .forms import ItemSearchForm
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 
 
@@ -42,7 +42,34 @@ class ItemCreateView(LoginRequiredMixin, CreateView): #View with a form where we
         form.instance.user = self.request.user
         return super().form_valid(form)
 
+class ItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Item
+    fields = ['name', 'description', 'price']
 
+    #Override the form_valid method
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+    #Makes sure only the author of a specific post can update it
+    def test_func(self):
+        item = self.get_object() #Gets exact item were updating
+        #Check to make sure current user is author of item
+        if self.request.user == item.user:
+            return True
+        return False
+
+class ItemDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Item
+    success_url = '/' #If the deletion is successful, redirect to homepage
+
+    # Makes sure only the author of a specific post can update it. Overrides test_func method
+    def test_func(self):
+        item = self.get_object()  # Gets exact item were deleting
+        # Check to make sure current user is author of item
+        if self.request.user == item.user:
+            return True
+        return False
 
 def about(request):
     return render(request, 'item_searcher/about.html', {'title': 'About'})
