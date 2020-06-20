@@ -1,19 +1,6 @@
 {% extends 'item_searcher/base.html' %}
 {% load crispy_forms_tags %}
 {% block content %}
-{% for item in items %}
-<article class="media content-section">
-    <img class="rounded-circle article-img" src="{{ item.user.profile.image.url }}">
-    <div class="media-body">
-        <div class="article-metadata">
-            <a class="mr-2" href="#">{{ item.user }}</a>
-            <small class="text-muted">{{ item.description }}</small>
-        </div>
-        <h2><a class="article-title" href="{% url 'item_searcher_detail' item.id %}">{{ item.name }}</a></h2>
-        <p>{{ item.price }}</p>
-    </div>
-</article>
-{% endfor %}
 
 <div>
     <form method="POST">

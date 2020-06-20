@@ -3,11 +3,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponse
 from .models import Item
 from .forms import ItemSearchForm
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import DetailView, CreateView, UpdateView, DeleteView, FormView
+from . import site_scraper
 
 
 
-
+'''
 def home(request):
     #Home page item search bar
     if request.method == 'POST':
@@ -22,13 +23,18 @@ def home(request):
         'items': Item.objects.all(),
         'form': form
     }
-    return render(request, 'item_searcher/home.html', context)
+    return render(request, 'item_searcher/home.html', context)'''
 
-class ItemListView(ListView):
-    model = Item
+class ItemSearchView(FormView):
     template_name = 'item_searcher/home.html' #<app>/<model>_<viewtype>.html
-    context_object_name = 'items'
-    ordering = ['price'] #Orders items by price
+    form_class = ItemSearchForm
+    success_url = 'about/'
+
+    def form_valid(self, form):
+        product = site_scraper.gather_info(form.cleaned_data.get('url'))
+        print(product.title)
+        return super().form_valid(form)
+
 
 class ItemDetailView(DetailView): #View for more detail on item when you click on it
     model = Item
