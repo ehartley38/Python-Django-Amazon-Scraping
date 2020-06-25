@@ -27,7 +27,7 @@ def home(request):
 class ItemSearchView(FormView):
     template_name = 'item_searcher/home.html'  # <app>/<model>_<viewtype>.html
     form_class = ItemSearchForm
-    success_url = 'about/'
+    success_url = 'list/'
 
     def form_valid(self, form):
         product = site_scraper.gather_info(form.cleaned_data.get('url'))
