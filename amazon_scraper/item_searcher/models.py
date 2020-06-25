@@ -6,7 +6,7 @@ from django.urls import reverse
 
 class Item(models.Model):
     name = models.CharField(max_length=100)
-    description = models.TextField()
+    #description = models.TextField()
     price = models.FloatField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
