@@ -1,10 +1,10 @@
-from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponse
-from .models import Item
-from .forms import ItemSearchForm
 from django.views.generic import DetailView, CreateView, UpdateView, DeleteView, FormView, ListView
+
 from . import site_scraper
+from .forms import ItemSearchForm
+from .models import Item
 
 '''
 def home(request):
@@ -35,8 +35,6 @@ class ItemSearchView(FormView):
         item.save()
         print(Item.objects.all())
         return super().form_valid(form)
-
-
 
 
 class ItemDetailView(DetailView):  # View for more detail on item when you click on it
@@ -83,15 +81,11 @@ class ItemDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             return True
         return False
 
+
 class ItemListView(ListView):
     model = Item
     context_object_name = 'items'
     template_name = 'item_searcher/list.html'
-
-
-
-
-
 
 
 def help(request):
