@@ -5,7 +5,7 @@ from . import views
 
 urlpatterns = [
     path('', ItemSearchView.as_view(), name='item_searcher_home'),
-    path('trackinginfo/', ItemTrackingView.as_view(), name='item_searcher_tracking'),
+    path('trackinginfo/<int:pk>/', ItemTrackingView.as_view(), name='item_searcher_tracking'),
     path('item/<int:pk>/', ItemDetailView.as_view(), name='item_searcher_detail'), #By specifying the pk variable in the url, it allows us to grab that value and use it in our view function
     path('item/<int:pk>/update', ItemUpdateView.as_view(), name='item_searcher_update'),
     path('item/<int:pk>/delete', ItemDeleteView.as_view(), name='item_searcher_delete'),

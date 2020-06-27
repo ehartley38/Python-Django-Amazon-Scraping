@@ -33,7 +33,7 @@ class ItemSearchView(FormView):
         product = site_scraper.gather_info(form.cleaned_data.get('url'))
         item = Item.objects.create(name=product.title, price=product.price, user=self.request.user)
         item.save()
-        self.success_url ='trackinginfo/'
+        self.success_url ='trackinginfo/'+ str(item.pk) + '/'
         print(item.pk)
 
         return super().form_valid(form)
@@ -41,6 +41,11 @@ class ItemSearchView(FormView):
 class ItemTrackingView(FormView):
     template_name = 'item_searcher/item_tracking_info.html'
     form_class = ItemTrackingForm
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data['item'] = Item.objects.get(pk=self.kwargs['pk'])
+        return data
 
 
 class ItemDetailView(DetailView):  # View for more detail on item when you click on it
