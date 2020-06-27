@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.views.generic import DetailView, CreateView, UpdateView, DeleteView, FormView, ListView
 
 from . import site_scraper
-from .forms import ItemSearchForm
+from .forms import ItemSearchForm, ItemTrackingForm
 from .models import Item
 
 '''
@@ -27,14 +27,20 @@ def home(request):
 class ItemSearchView(FormView):
     template_name = 'item_searcher/home.html'  # <app>/<model>_<viewtype>.html
     form_class = ItemSearchForm
-    success_url = 'list/'
+    #success_url = 'list/'
 
     def form_valid(self, form):
         product = site_scraper.gather_info(form.cleaned_data.get('url'))
         item = Item.objects.create(name=product.title, price=product.price, user=self.request.user)
         item.save()
-        print(Item.objects.all())
+        self.success_url ='trackinginfo/'
+        print(item.pk)
+
         return super().form_valid(form)
+
+class ItemTrackingView(FormView):
+    template_name = 'item_searcher/item_tracking_info.html'
+    form_class = ItemTrackingForm
 
 
 class ItemDetailView(DetailView):  # View for more detail on item when you click on it

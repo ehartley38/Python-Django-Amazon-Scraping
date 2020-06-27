@@ -15,3 +15,11 @@ class Item(models.Model):
 
     def get_absolute_url(self):
         return reverse('item_searcher_detail', kwargs={'pk': self.pk}) #reverse returns the full path as a string. kwargs part returns the instance of the specifc posts primary key
+
+
+class TrackingDetails(models.Model):
+    current_price = models.FloatField()
+    start_price = models.FloatField()
+    target_price = models.FloatField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.PROTECT)

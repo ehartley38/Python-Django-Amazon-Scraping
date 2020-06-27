@@ -1,0 +1,27 @@
+{% extends 'item_searcher/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div>
+    <h1>Insert Details</h1>
+
+    <article class="media content-section">
+        <img class="rounded-circle article-img" src="{{ item.user.profile.image.url }}">
+        <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2" href="#">{{ item.user }}</a>
+            </div>
+            <h2><a class="article-title" href="#">{{ item.name }}</a></h2>
+            <p>{{ item.price }}</p>
+        </div>
+    </article>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button class="btn btn-outline-info" type="search">Search</button>
+    </form>
+</div>
+
+
+{% endblock content %}

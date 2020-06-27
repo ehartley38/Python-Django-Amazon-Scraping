@@ -1,5 +1,5 @@
 from django import forms
-from .models import Item
+from .models import Item, TrackingDetails
 
 class ItemSearchForm(forms.Form):
     url = forms.CharField()
@@ -9,3 +9,8 @@ class ItemSearchForm(forms.Form):
     class Meta:
         model = Item
         fields = ['name']'''
+
+class ItemTrackingForm(forms.Form):
+    class Meta:
+        model = TrackingDetails
+        fields = ['target_price']
