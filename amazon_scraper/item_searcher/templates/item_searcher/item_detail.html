@@ -4,8 +4,7 @@
         <img class="rounded-circle article-img" src="{{ object.user.profile.image.url }}">
         <div class="media-body">
             <div class="article-metadata">
-                <a class="mr-2" href="#">{{ object.user }}</a>
-                <small class="text-muted">{{ object.description }}</small>
+                <small class="text-muted">{{ object.item.description }}</small>
                 {% if object.user == user %}
                     <div>
                         <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'item_searcher_update' object.id %}">Update</a>
@@ -13,8 +12,9 @@
                     </div>
                 {% endif %}
             </div>
-            <h2 class="article-title">{{ object.name }}</h2>
-            <p>{{ object.price }}</p>
+            <h2 class="article-title">{{ object.item.name }}</h2>
+            <p>CURRENT PRICE : {{ object.current_price }}</p>
+            <p>TARGET PRICE : {{ object.target_price }}</p>
         </div>
     </article>
 {% endblock content %}

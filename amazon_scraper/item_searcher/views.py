@@ -30,7 +30,7 @@ class ItemSearchView(FormView):
 
     def form_valid(self, form):
         product = site_scraper.gather_info(form.cleaned_data.get('url'))
-        item = Item.objects.create(name=product.title, price=product.price, user=self.request.user)
+        item = Item.objects.create(name=product.title, price=product.price)
         item.save()
         self.success_url ='trackinginfo/'+ str(item.pk) + '/'
         return super().form_valid(form)
@@ -59,7 +59,8 @@ class ItemTrackingView(FormView):
 
 
 class ItemDetailView(DetailView):  # View for more detail on item when you click on it
-    model = Item
+    model = TrackingDetails
+    template_name = 'item_searcher/item_detail.html'
 
 
 class ItemCreateView(LoginRequiredMixin, CreateView):  # View with a form where we create a new post
@@ -104,8 +105,8 @@ class ItemDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 class ItemListView(ListView):
-    model = Item
-    context_object_name = 'items'
+    model = TrackingDetails
+    context_object_name = 'tracking_details'
     template_name = 'item_searcher/list.html'
 
 
