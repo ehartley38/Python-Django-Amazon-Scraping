@@ -22,4 +22,4 @@ class TrackingDetails(models.Model):
     start_price = models.FloatField()
     target_price = models.FloatField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    item = models.ForeignKey(Item, on_delete=models.PROTECT)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)

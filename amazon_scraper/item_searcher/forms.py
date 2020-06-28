@@ -10,7 +10,7 @@ class ItemSearchForm(forms.Form):
         model = Item
         fields = ['name']'''
 
-class ItemTrackingForm(forms.Form):
+class ItemTrackingForm(forms.ModelForm):
     class Meta:
         model = TrackingDetails
         fields = ['target_price']

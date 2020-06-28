@@ -4,7 +4,7 @@ from django.views.generic import DetailView, CreateView, UpdateView, DeleteView,
 
 from . import site_scraper
 from .forms import ItemSearchForm, ItemTrackingForm
-from .models import Item
+from .models import Item, TrackingDetails
 
 '''
 def home(request):
@@ -27,25 +27,35 @@ def home(request):
 class ItemSearchView(FormView):
     template_name = 'item_searcher/home.html'  # <app>/<model>_<viewtype>.html
     form_class = ItemSearchForm
-    #success_url = 'list/'
 
     def form_valid(self, form):
         product = site_scraper.gather_info(form.cleaned_data.get('url'))
         item = Item.objects.create(name=product.title, price=product.price, user=self.request.user)
         item.save()
         self.success_url ='trackinginfo/'+ str(item.pk) + '/'
-        print(item.pk)
-
         return super().form_valid(form)
 
+#User enters tracking info here
 class ItemTrackingView(FormView):
     template_name = 'item_searcher/item_tracking_info.html'
     form_class = ItemTrackingForm
+    success_url = '/list/'
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
         data['item'] = Item.objects.get(pk=self.kwargs['pk'])
         return data
+
+    def form_valid(self, form):
+        #self.success_url = 'list/'
+        target_price = form.cleaned_data.get('target_price')
+        item = self.get_context_data()['item']
+        tracking_info = TrackingDetails.objects.create(current_price=item.price, start_price=item.price, target_price=target_price,
+                                                       user=self.request.user, item=item)
+        tracking_info.save()
+        return super().form_valid(form)
+
+
 
 
 class ItemDetailView(DetailView):  # View for more detail on item when you click on it
