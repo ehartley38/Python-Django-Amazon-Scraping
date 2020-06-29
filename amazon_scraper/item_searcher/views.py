@@ -74,19 +74,23 @@ class ItemCreateView(LoginRequiredMixin, CreateView):  # View with a form where 
 
 
 class ItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Item
-    fields = ['name', 'description', 'price']
+    model = TrackingDetails
+    fields = ['target_price']
 
     # Override the form_valid method
     def form_valid(self, form):
         form.instance.user = self.request.user
+        #Redirect to item detail view
+        tracking_details = self.get_object()
+        self.success_url = '/item/' + str(tracking_details.pk) + '/'
         return super().form_valid(form)
 
-    # Makes sure only the author of a specific post can update it
+
+    # Makes sure only the creator of a specific item can update it
     def test_func(self):
-        item = self.get_object()  # Gets exact item were updating
+        user = self.get_object().user  # Gets exact item were updating
         # Check to make sure current user is author of item
-        if self.request.user == item.user:
+        if self.request.user == user:
             return True
         return False
 
