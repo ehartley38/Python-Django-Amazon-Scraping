@@ -17,15 +17,29 @@ def is_duplicate(url):
             return True
     return False
 
+'''Return True if player is already tracking the item'''
+
+def user_already_tracks(url, user):
+    for tracker in TrackingDetails.objects.all():
+        if (tracker.user == user) and (tracker.item.url == url):
+            return True
+    return False
+
 
 class ItemSearchView(FormView):
     template_name = 'item_searcher/home.html'  # <app>/<model>_<viewtype>.html
     form_class = ItemSearchForm
 
+    #To Do - Only add item to database at the point when user adds item to database
     def form_valid(self, form):
         url = form.cleaned_data.get('url')
         product = site_scraper.gather_info(url)
+        #If item is already in database
         if is_duplicate(url):
+            if user_already_tracks(url, self.request.user):
+                print('You are already tracking this item!')
+                self.success_url = '/'
+                return super().form_valid(form)
             item = Item.objects.get(url=url)
             self.success_url = 'trackinginfo/' + str(item.pk) + '/'
         else:
@@ -34,7 +48,7 @@ class ItemSearchView(FormView):
             price = Price.objects.create(item=item, price=product.price, date=datetime.now())
             price.save()
             self.success_url = 'trackinginfo/' + str(item.pk) + '/'
-        #tasks.update_pricing_info()
+        # tasks.update_pricing_info()
         return super().form_valid(form)
 
 
