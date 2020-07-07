@@ -4,24 +4,9 @@ from django.views.generic import DetailView, CreateView, UpdateView, DeleteView,
 
 from . import site_scraper
 from .forms import ItemSearchForm, ItemTrackingForm
-from .models import Item, TrackingDetails
-
-'''
-def home(request):
-    #Home page item search bar
-    if request.method == 'POST':
-        form = ItemSearchForm(request.POST)
-        if form.is_valid():
-            form.save()
-            product = form.cleaned_data.get('name')
-    else:
-        form = ItemSearchForm()
-
-    context = {
-        'items': Item.objects.all(),
-        'form': form
-    }
-    return render(request, 'item_searcher/home.html', context)'''
+from .models import Item, TrackingDetails, Price
+#from . import tasks
+from datetime import datetime
 
 
 class ItemSearchView(FormView):
@@ -29,9 +14,14 @@ class ItemSearchView(FormView):
     form_class = ItemSearchForm
 
     def form_valid(self, form):
-        product = site_scraper.gather_info(form.cleaned_data.get('url'))
-        item = Item.objects.create(name=product.title, price=product.price)
+        url = form.cleaned_data.get('url')
+        product = site_scraper.gather_info(url)
+        item = Item.objects.create(name=product.title, current_price=product.price, url=url)
         item.save()
+        price = Price.objects.create(item=item, price=product.price, date=datetime.now())
+        price.save()
+        print(price.date)
+        #tasks.update_pricing_info()
         self.success_url ='trackinginfo/'+ str(item.pk) + '/'
         return super().form_valid(form)
 
@@ -50,7 +40,7 @@ class ItemTrackingView(FormView):
         #self.success_url = 'list/'
         target_price = form.cleaned_data.get('target_price')
         item = self.get_context_data()['item']
-        tracking_info = TrackingDetails.objects.create(current_price=item.price, start_price=item.price, target_price=target_price,
+        tracking_info = TrackingDetails.objects.create(target_price=target_price,
                                                        user=self.request.user, item=item)
         tracking_info.save()
         return super().form_valid(form)
@@ -96,14 +86,14 @@ class ItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 
 class ItemDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = Item
+    model = TrackingDetails
     success_url = '/'  # If the deletion is successful, redirect to homepage
 
     # Makes sure only the author of a specific post can update it. Overrides test_func method
     def test_func(self):
-        item = self.get_object()  # Gets exact item were deleting
+        tracking_details = self.get_object()  # Gets exact item were deleting
         # Check to make sure current user is author of item
-        if self.request.user == item.user:
+        if self.request.user == tracking_details.user:
             return True
         return False
 

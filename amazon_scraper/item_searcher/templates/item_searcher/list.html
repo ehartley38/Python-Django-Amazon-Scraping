@@ -9,7 +9,7 @@
                     <a class="mr-2" href="#">{{ item.user }}</a>
                 </div>
                 <h2><a class="article-title" href="{% url 'item_searcher_detail' item.id %}">{{ item.item.name }}</a></h2>
-                <p>CURRENT PRICE : {{ item.current_price }}</p>
+                <p>CURRENT PRICE : {{ item.item.current_price }}</p>
                 <p>TARGET PRICE : {{ item.target_price }}</p>
             </div>
         </article>

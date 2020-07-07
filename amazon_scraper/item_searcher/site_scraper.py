@@ -29,4 +29,10 @@ def gather_info(url):
     product = Product(title, price)
     return product
 
+def get_price(url):
+    page = requests.get(url, headers=headers)
+    soup1 = BeautifulSoup(page.content, "html.parser")
+    soup2 = BeautifulSoup(soup1.prettify(), "html.parser")
+
+    return float(re.sub('[£]', '', soup2.find(id='priceblock_ourprice').get_text().strip()))
 

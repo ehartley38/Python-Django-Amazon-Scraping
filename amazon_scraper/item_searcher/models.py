@@ -6,9 +6,9 @@ from django.urls import reverse
 
 class Item(models.Model):
     name = models.CharField(max_length=100)
-    #description = models.TextField()
-    price = models.FloatField()
-    #user = models.ForeignKey(User, on_delete=models.CASCADE)
+    current_price = models.FloatField()
+    url = models.CharField(max_length=100, default='')
+
 
     def __str__(self):
         return self.name
@@ -18,8 +18,12 @@ class Item(models.Model):
 
 
 class TrackingDetails(models.Model):
-    current_price = models.FloatField()
-    start_price = models.FloatField()
     target_price = models.FloatField()
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+class Price(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    price = models.FloatField()
+    date = models.DateTimeField()
+
