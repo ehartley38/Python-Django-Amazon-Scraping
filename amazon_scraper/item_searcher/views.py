@@ -30,8 +30,8 @@ class ItemSearchView(FormView):
     template_name = 'item_searcher/home.html'  # <app>/<model>_<viewtype>.html
     form_class = ItemSearchForm
 
-    #To Do - Only add item to database at the point when user adds item to database
     def form_valid(self, form):
+        print(Item.objects.all())
         url = form.cleaned_data.get('url')
         product = site_scraper.gather_info(url)
         #If item is already in database
@@ -44,9 +44,6 @@ class ItemSearchView(FormView):
             self.success_url = 'trackinginfo/' + str(item.pk) + '/'
         else:
             item = Item.objects.create(name=product.title, current_price=product.price, url=url)
-            item.save()
-            price = Price.objects.create(item=item, price=product.price, date=datetime.now())
-            price.save()
             self.success_url = 'trackinginfo/' + str(item.pk) + '/'
         # tasks.update_pricing_info()
         return super().form_valid(form)
@@ -65,12 +62,15 @@ class ItemTrackingView(FormView):
         return data
 
     def form_valid(self, form):
-        #self.success_url = 'list/'
         target_price = form.cleaned_data.get('target_price')
         item = self.get_context_data()['item']
+        price = Price.objects.create(item=item, price=item.current_price, date=datetime.now())
         tracking_info = TrackingDetails.objects.create(target_price=target_price,
                                                        user=self.request.user, item=item)
+        item.save()
+        price.save()
         tracking_info.save()
+        print(Item.objects.all())
         return super().form_valid(form)
 
 
