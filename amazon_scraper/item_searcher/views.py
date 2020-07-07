@@ -5,8 +5,17 @@ from django.views.generic import DetailView, CreateView, UpdateView, DeleteView,
 from . import site_scraper
 from .forms import ItemSearchForm, ItemTrackingForm
 from .models import Item, TrackingDetails, Price
-#from . import tasks
+from . import tasks
 from datetime import datetime
+
+
+'''Return True if the item input is already in the database'''
+
+def is_duplicate(url):
+    for item in Item.objects.all():
+        if item.url == url:
+            return True
+    return False
 
 
 class ItemSearchView(FormView):
@@ -16,14 +25,19 @@ class ItemSearchView(FormView):
     def form_valid(self, form):
         url = form.cleaned_data.get('url')
         product = site_scraper.gather_info(url)
-        item = Item.objects.create(name=product.title, current_price=product.price, url=url)
-        item.save()
-        price = Price.objects.create(item=item, price=product.price, date=datetime.now())
-        price.save()
-        print(price.date)
+        if is_duplicate(url):
+            item = Item.objects.get(url=url)
+            self.success_url = 'trackinginfo/' + str(item.pk) + '/'
+        else:
+            item = Item.objects.create(name=product.title, current_price=product.price, url=url)
+            item.save()
+            price = Price.objects.create(item=item, price=product.price, date=datetime.now())
+            price.save()
+            self.success_url = 'trackinginfo/' + str(item.pk) + '/'
         #tasks.update_pricing_info()
-        self.success_url ='trackinginfo/'+ str(item.pk) + '/'
         return super().form_valid(form)
+
+
 
 #User enters tracking info here
 class ItemTrackingView(FormView):
