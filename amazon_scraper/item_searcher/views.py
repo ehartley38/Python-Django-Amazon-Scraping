@@ -131,6 +131,11 @@ class ItemListView(ListView):
     context_object_name = 'tracking_details'
     template_name = 'item_searcher/list.html'
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user_items'] = TrackingDetails.objects.all().filter(user=self.request.user)
+        return context
+
 
 def help(request):
     return HttpResponse('<h1>Help</h1>')

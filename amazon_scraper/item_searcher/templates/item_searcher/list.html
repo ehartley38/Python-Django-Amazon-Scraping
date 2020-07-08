@@ -1,7 +1,6 @@
 {% extends "item_searcher/base.html" %}
 {% block content %}
-{% for item in tracking_details %}
-    {% if user == item.user %}
+{% for item in user_items %}
         <article class="media content-section">
             <img class="rounded-circle article-img" src="{{ item.user.profile.image.url }}">
             <div class="media-body">
@@ -13,6 +12,5 @@
                 <p>TARGET PRICE : {{ item.target_price }}</p>
             </div>
         </article>
-    {% endif%}
 {% endfor %}
 {% endblock content %}
