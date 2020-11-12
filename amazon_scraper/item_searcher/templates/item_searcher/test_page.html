@@ -1,0 +1,14 @@
+{% extends 'item_searcher/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button class="btn btn-outline-info" type="search">Search</button>
+    </form>
+</div>
+
+
+{% endblock content %}

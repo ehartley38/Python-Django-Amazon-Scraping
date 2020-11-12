@@ -1,6 +1,6 @@
 #This contains all the urls specific to this item_searcher app
 from django.urls import path
-from .views import ItemSearchView, ItemDetailView, ItemCreateView, ItemUpdateView, ItemDeleteView, ItemTrackingView
+from .views import ItemSearchView, ItemDetailView, ItemCreateView, ItemUpdateView, ItemDeleteView, ItemTrackingView, ItemTestView
 from . import views
 
 urlpatterns = [
@@ -11,7 +11,7 @@ urlpatterns = [
     path('item/<int:pk>/delete', ItemDeleteView.as_view(), name='item_searcher_delete'),
     path('item/new/', ItemCreateView.as_view(), name='item_searcher_create'),
     path('list/', views.ItemListView.as_view(), name='item_searcher_list'),
-    path('help/', views.help, name='item_searcher_help'),
+    path('testing/', views.ItemTestView.as_view(), name='item_searcher_testing'),
 ]
 
 

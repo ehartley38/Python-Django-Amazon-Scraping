@@ -14,3 +14,6 @@ class ItemTrackingForm(forms.ModelForm):
     class Meta:
         model = TrackingDetails
         fields = ['target_price']
+
+class ItemTestForm(forms.Form):
+    data = forms.CharField()

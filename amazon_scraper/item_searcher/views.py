@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.views.generic import DetailView, CreateView, UpdateView, DeleteView, FormView, ListView
 
 from . import site_scraper
-from .forms import ItemSearchForm, ItemTrackingForm
+from .forms import ItemSearchForm, ItemTrackingForm, ItemTestForm
 from .models import Item, TrackingDetails, Price
 from . import tasks
 from datetime import datetime
@@ -31,7 +31,6 @@ class ItemSearchView(FormView):
     form_class = ItemSearchForm
 
     def form_valid(self, form):
-        print(Item.objects.all())
         url = form.cleaned_data.get('url')
         product = site_scraper.gather_info(url)
         #If item is already in database
@@ -45,7 +44,8 @@ class ItemSearchView(FormView):
         else:
             item = Item.objects.create(name=product.title, current_price=product.price, url=url)
             self.success_url = 'trackinginfo/' + str(item.pk) + '/'
-        # tasks.update_pricing_info()
+
+        tasks.update_pricing_info()
         return super().form_valid(form)
 
 
@@ -64,13 +64,12 @@ class ItemTrackingView(FormView):
     def form_valid(self, form):
         target_price = form.cleaned_data.get('target_price')
         item = self.get_context_data()['item']
-        price = Price.objects.create(item=item, price=item.current_price, date=datetime.now())
+        price = Price.objects.create(item=item, price=item.current_price, date=datetime.now().date())
         tracking_info = TrackingDetails.objects.create(target_price=target_price,
                                                        user=self.request.user, item=item)
         item.save()
         price.save()
         tracking_info.save()
-        print(Item.objects.all())
         return super().form_valid(form)
 
 
@@ -137,5 +136,17 @@ class ItemListView(ListView):
         return context
 
 
-def help(request):
-    return HttpResponse('<h1>Help</h1>')
+class ItemTestView(FormView):
+    template_name = 'item_searcher/test_page.html'
+    form_class = ItemTestForm
+    success_url = '/testing/'
+
+    def form_valid(self, form):
+        tasks.update_pricing_info()
+
+        for price in Price.objects.all():
+            print(price.date.date())
+
+
+
+        return super().form_valid(form)

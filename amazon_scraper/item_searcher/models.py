@@ -17,6 +17,7 @@ class Item(models.Model):
         return reverse('item_searcher_detail', kwargs={'pk': self.pk}) #reverse returns the full path as a string. kwargs part returns the instance of the specifc posts primary key
 
 
+
 class TrackingDetails(models.Model):
     target_price = models.FloatField()
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
